@@ -61,7 +61,7 @@ export function createApp() {
 				const name = data.name.trim();
 				const email = data.email.trim().toLowerCase();
 				const validEmail = /^[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+$/.test(email);
-				if (!name || name.length > 100 || !validEmail) {
+				if (!name || name.length >= 100 || !validEmail) {
 					return send(response, 400, { error: "invalid_registration" });
 				}
 				const registration = { id: String(registrations.length + 1), name, email };
