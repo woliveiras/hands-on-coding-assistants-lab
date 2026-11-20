@@ -34,3 +34,5 @@ Start each exercise from the tag named in the book. Commit work you want to keep
 Use fictional requests and lab credentials when you work with a hosted model.
 
 [Run the Grafana exercises](observability/README.md) from the `lab-observability` or `lab-harness` checkpoint.
+
+The verification run prints the test result and the coverage ratios for the revision under review.
