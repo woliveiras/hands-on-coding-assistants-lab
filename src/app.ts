@@ -55,12 +55,16 @@ export function createApp() {
 			}
 			if (method === "POST" && url.pathname === "/registrations") {
 				const data = await readObject(request);
-				if (!data) return send(response, 400, { error: "invalid_registration" });
-				const registration = {
-					id: String(registrations.length + 1),
-					name: String(data.name ?? ""),
-					email: String(data.email ?? ""),
-				};
+				if (typeof data?.name !== "string" || typeof data.email !== "string") {
+					return send(response, 400, { error: "invalid_registration" });
+				}
+				const name = data.name.trim();
+				const email = data.email.trim().toLowerCase();
+				const validEmail = /^[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+$/.test(email);
+				if (!name || name.length > 100 || !validEmail) {
+					return send(response, 400, { error: "invalid_registration" });
+				}
+				const registration = { id: String(registrations.length + 1), name, email };
 				registrations.push(registration);
 				return send(response, 201, registration);
 			}
