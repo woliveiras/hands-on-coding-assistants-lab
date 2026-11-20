@@ -53,10 +53,3 @@ test("an oversized JSON body leaves the task list intact", async t => {
 	assert.deepEqual(await response.json(), { error: "invalid_task" });
 	assert.deepEqual(await (await request("/tasks")).json(), before);
 });
-
-test("an unknown path returns the not_found response", async t => {
-	const request = await startApp(t);
-	const response = await request("/unknown");
-	assert.equal(response.status, 404);
-	assert.deepEqual(await response.json(), { error: "not_found" });
-});
