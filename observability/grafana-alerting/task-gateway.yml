@@ -1,0 +1,67 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: Task lab webhook
+    receivers:
+      - uid: task-lab-webhook
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          url: http://simulator:4000/notifications
+          httpMethod: POST
+
+groups:
+  - orgId: 1
+    name: task-gateway
+    folder: Task API Lab
+    interval: 10s
+    rules:
+      - uid: task-gateway-error-ratio
+        title: Task gateway error ratio
+        condition: C
+        for: 10s
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        annotations:
+          summary: More than 20% of Task API gateway requests returned 5xx
+          description: Inspect the latest gateway spans and logs, then run the healthy traffic phase to verify recovery.
+        labels:
+          exercise: live
+          team: task-api
+        notification_settings:
+          receiver: Task lab webhook
+          group_by: [alertname]
+          group_wait: 0s
+          group_interval: 5s
+          repeat_interval: 5m
+        data:
+          - refId: A
+            relativeTimeRange: { from: 60, to: 0 }
+            datasourceUid: prometheus
+            model:
+              datasource: { type: prometheus, uid: prometheus }
+              editorMode: code
+              expr: sum(rate(lab_task_gateway_requests_total{status_class="5xx"}[30s])) / clamp_min(sum(rate(lab_task_gateway_requests_total[30s])), 0.000001)
+              instant: true
+              intervalMs: 2000
+              maxDataPoints: 1000
+              range: false
+              refId: A
+          - refId: C
+            relativeTimeRange: { from: 0, to: 0 }
+            datasourceUid: __expr__
+            model:
+              datasource: { type: __expr__, uid: __expr__ }
+              conditions:
+                - evaluator: { params: [0.2], type: gt }
+                  operator: { type: and }
+                  query: { params: [C] }
+                  reducer: { params: [], type: last }
+                  type: query
+              expression: A
+              intervalMs: 2000
+              maxDataPoints: 1000
+              refId: C
+              type: threshold

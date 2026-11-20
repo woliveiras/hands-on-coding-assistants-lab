@@ -1,0 +1,97 @@
+{
+  "uid": "task-api-incident",
+  "title": "Task API Incident Replay",
+  "schemaVersion": 41,
+  "editable": false,
+  "timezone": "utc",
+  "time": {
+    "from": "now-20m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Requests and gateway timeouts per recorded minute",
+      "description": "These are fixed per-minute counts. Use the replay\u2019s UTC range and the samples at the minute boundaries.",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum(lab_incident_requests)",
+          "legendFormat": "All requests",
+          "refId": "A",
+          "range": true,
+          "editorMode": "code"
+        },
+        {
+          "expr": "lab_incident_requests{outcome=\"timeout\"}",
+          "legendFormat": "Gateway timeouts",
+          "refId": "B",
+          "range": true,
+          "editorMode": "code"
+        }
+      ],
+      "options": {
+        "legend": {
+          "showLegend": true
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "logs",
+      "title": "Rollout and detection events",
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 24,
+        "h": 9
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "expr": "{service_name=\"task-gateway\",exercise=\"incident\"} | json | event!=\"request\"",
+          "queryType": "range"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "enableLogDetails": true
+      }
+    }
+  ]
+}
