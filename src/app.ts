@@ -33,6 +33,7 @@ async function readObject(request: IncomingMessage) {
 export function createApp() {
 	const tasks: Task[] = [{ id: "1", title: "Write a spec" }];
 	const registrations: Registration[] = [];
+	let nextRegistrationId = 1;
 
 	return createServer(async (request, response) => {
 		try {
@@ -55,6 +56,7 @@ export function createApp() {
 			}
 			if (method === "POST" && url.pathname === "/registrations") {
 				const data = await readObject(request);
+				const id = String(nextRegistrationId++);
 				if (typeof data?.name !== "string" || typeof data.email !== "string") {
 					return send(response, 400, { error: "invalid_registration" });
 				}
@@ -64,7 +66,7 @@ export function createApp() {
 				if (!name || name.length > 100 || !validEmail) {
 					return send(response, 400, { error: "invalid_registration" });
 				}
-				const registration = { id: String(registrations.length + 1), name, email };
+				const registration = { id, name, email };
 				registrations.push(registration);
 				return send(response, 201, registration);
 			}
