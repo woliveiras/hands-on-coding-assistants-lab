@@ -1,0 +1,15 @@
+services:
+  grafana:
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_AUTH_DISABLE_LOGIN_FORM: "false"
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "false"
+      GF_SECURITY_ADMIN_USER: lab-operator
+      GF_SECURITY_ADMIN_PASSWORD: lab-operator
+      GF_UNIFIED_ALERTING_ENABLED: "true"
+    volumes:
+      - ./grafana-alerting:/etc/grafana/provisioning/alerting:ro
+
+  simulator:
+    ports:
+      - "127.0.0.1:3400:4000"

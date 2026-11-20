@@ -32,3 +32,5 @@ Start each exercise from the tag named in the book. Commit work you want to keep
 | `lab-labels` | Reference implementation of searchable labels in memory |
 
 Use fictional requests and lab credentials when you work with a hosted model.
+
+[Run the Grafana exercises](observability/README.md) from the `lab-observability` or `lab-harness` checkpoint.
