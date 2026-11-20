@@ -1,0 +1,9 @@
+/.github/ @woliveiras
+/.nvmrc @woliveiras
+/package.json @woliveiras
+/coverage-policy.json @woliveiras
+/tools/coverage.mjs @woliveiras
+/test/ @woliveiras
+/contracts/ @woliveiras
+/.npmrc @woliveiras
+/src/ @woliveiras
