@@ -1,5 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
+import { normalizeRegistration } from "./registration.ts";
+
 type Task = { id: string; title: string };
 type Registration = { id: string; name: string; email: string };
 
@@ -54,17 +56,10 @@ export function createApp() {
 				return send(response, 201, task);
 			}
 			if (method === "POST" && url.pathname === "/registrations") {
-				const data = await readObject(request);
-				if (typeof data?.name !== "string" || typeof data.email !== "string") {
-					return send(response, 400, { error: "invalid_registration" });
-				}
-				const name = data.name.trim();
-				const email = data.email.trim().toLowerCase();
-				const validEmail = /^[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+$/.test(email);
-				if (!name || name.length > 100 || !validEmail) {
-					return send(response, 400, { error: "invalid_registration" });
-				}
-				const registration = { id: String(registrations.length + 1), name, email };
+				const input = normalizeRegistration(await readObject(request));
+				if (!input) return send(response, 400, { error: "invalid_registration" });
+
+				const registration = { id: String(registrations.length + 1), ...input };
 				registrations.push(registration);
 				return send(response, 201, registration);
 			}

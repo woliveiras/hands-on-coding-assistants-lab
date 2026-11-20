@@ -27,3 +27,36 @@ test("a blank task title returns an error and leaves the list intact", async t =
 	assert.deepEqual(await response.json(), { error: "invalid_task" });
 	assert.deepEqual(await (await request("/tasks")).json(), [{ id: "1", title: "Write a spec" }]);
 });
+
+test("a task title of 120 characters is accepted", async t => {
+	const request = await startApp(t);
+	const title = "a".repeat(120);
+	const response = await request("/tasks", jsonRequest("POST", { title }));
+	assert.equal(response.status, 201);
+	assert.equal((await response.json()).title, title);
+});
+
+test("an overlong title leaves the task list intact", async t => {
+	const request = await startApp(t);
+	const before = await (await request("/tasks")).json();
+	const response = await request("/tasks", jsonRequest("POST", { title: "a".repeat(121) }));
+	assert.equal(response.status, 400);
+	assert.deepEqual(await response.json(), { error: "invalid_task" });
+	assert.deepEqual(await (await request("/tasks")).json(), before);
+});
+
+test("an oversized JSON body leaves the task list intact", async t => {
+	const request = await startApp(t);
+	const before = await (await request("/tasks")).json();
+	const response = await request("/tasks", jsonRequest("POST", { title: "a", extra: "x".repeat(4096) }));
+	assert.equal(response.status, 400);
+	assert.deepEqual(await response.json(), { error: "invalid_task" });
+	assert.deepEqual(await (await request("/tasks")).json(), before);
+});
+
+test("an unknown path returns the not_found response", async t => {
+	const request = await startApp(t);
+	const response = await request("/unknown");
+	assert.equal(response.status, 404);
+	assert.deepEqual(await response.json(), { error: "not_found" });
+});

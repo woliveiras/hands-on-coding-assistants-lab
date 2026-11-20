@@ -2,12 +2,16 @@
 	"name": "hands-on-coding-assistants-lab",
 	"private": true,
 	"type": "module",
-	"engines": { "node": ">=24" },
+	"engines": {
+		"node": ">=24"
+	},
 	"scripts": {
 		"start": "node src/server.ts",
 		"test": "node --test test/*.test.ts",
 		"test:registration": "node --test contracts/registration.test.ts",
 		"test:labels": "node --test contracts/labels.test.ts",
-		"test:mcp": "node --test contracts/mcp.test.ts"
+		"test:mcp": "node --test contracts/mcp.test.ts",
+		"coverage": "node tools/coverage.mjs --report",
+		"verify": "node tools/coverage.mjs"
 	}
 }

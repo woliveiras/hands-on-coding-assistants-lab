@@ -1,0 +1,8 @@
+{
+  "include": ["src/app.ts", "src/registration.ts"],
+  "minimum": {
+    "lines": { "covered": 81, "total": 83 },
+    "branches": { "covered": 43, "total": 46 },
+    "functions": { "covered": 5, "total": 5 }
+  }
+}
